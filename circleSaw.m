@@ -1,78 +1,66 @@
-function [Y,X,cIndex] = circleSaw(THETA,N,n)
+function [Y,X] = circleSaw(THETA,N)
 %CIRCLESAW Saw wave constrained by unit-circle
 %
 %  [Y,X] = circleSaw(THETA,N)
-%  [Y,X,cIndex] = circleSaw(THETA,N,n)
 %
 % Inputs
 %  THETA  - Scalar or array of angles of saw peaks in square-root mass
 %            state-space.
 %  N      - Number of collisions. Same number of elements as THETA.
-%  n      - (Optional) number of samples in range [-1 1] (x; default: 1000)
 %
 % Output
-%  Y      - Vector or array of state-space y-values indicating the combined
-%              velocity and square-root mass of the small mass (m1), for
-%              each state-space value on the closed interval x in [-1 1].
-%              -> If THETA is an array, then columns of Y correspond to
-%                 each element of THETA.
-%  x      - State-space value for the large mass (m2), in the range [-1 1].
-%  cIndex - Collision indices. If multiple THETA values, then this is
-%              returned as cell array with one cell per THETA value.
+%  Y      - Cell array of vectors. 
+%              v1 * sqrt(m1)
+%  X      - Cell array of vectors corresponding to Y.
+%              v2 * sqrt(m2)
 %
 % See also: main.m
-
-if nargin < 3
-   n = 10000;
-end
 
 if numel(THETA)~=numel(N)
    error('THETA and N must have same number of elements.');
 end
 
 if numel(THETA) > 1
-   Y = nan(n,numel(THETA));
-   cIndex = cell(size(THETA));
+   Y = cell(numel(THETA),1);
+   X = cell(numel(THETA),1);
    for ii = 1:numel(THETA)
-      [Y(:,ii),X(:,ii),cIndex{ii}] = circleSaw(THETA(ii),N(ii),n);
+      [Y{ii},X{ii}] = circleSaw(THETA(ii),N(ii));
    end
    return;
 end
 
-X = linspace(-1,1.05,n).';
-Y = nan(n,1);
-opts = optimset(optimset('fsolve'),'Display','off');
-idx = 1;
-Y(idx) = 0; % Always starts at zero.
-cIndex = [1; nan(N-1,1)]; % System always starts with a collision
-for k = 1:(N-1)
-   [ypt,xpt,tmp_idx] = ...
-      computeIntersection(-Y(idx),X(idx:end),THETA);
-   idx = tmp_idx + cIndex(k) - 1;
-   vec = (cIndex(k)+1):idx;
-   X(vec) = xpt;
-   Y(vec) = ypt;
-   cIndex(k+1) = idx;
+index = 1;
+Y = zeros((N-1)*2,1);
+X = -ones((N-1)*2,1);
+opts = optimset(optimset('fminbnd'), ...
+   'Display','off', ...
+   'TolX',1e-7, ...
+   'MaxIter',1500, ...
+   'MaxFunEvals',1500 ...
+   ... 'PlotFcns',{@optimplotfval} ...
+   );
+while index < ((N-1)*2)
+   index = index + 1;
+   [Y(index),X(index)] = compute(X(index-1),Y(index-1),THETA,opts);
+   index = index + 1;
+   Y(index) = -Y(index-1);
+   X(index) = X(index-1);
 end
-X(X >= 1) = nan;
 
-   function [ys,xs,index] = computeIntersection(y0,xx,theta0)
-      %COMPUTEINTERSECTION Helper function to compute intersect with circle
-      m = -cot(theta0);
-      x0 = xx(1);
-      y_line = m.*(xx - x0) + y0;
-      y_circ = -cos(xx.*(pi/2));
+   function [y,x] = compute(x0,y0,theta,opts)
+      %COMPUTE Helper function to compute intersect with circle
       
-      index = find(y_line <= y_circ,1,'first');
-      
-      phi = atan2(y_circ(index),xx(index));
-      yf = sin(phi);
-      xf = cos(phi);
-      
-      xs = linspace(x0,xf,index);
-      ys = interp1([x0,xf],[y0,yf],xs,'linear');
-      xs(1) = [];
-      ys(1) = [];
+      m = -cot(theta);
+      y_line = @(x)f(x,m,x0,y0);
+      fun = @(x)(1 - (x^2 + y_line(x)^2))^2;
+      x = fminbnd(fun, x0, 1.05, opts);
+      y = y_line(x);
    end
+
+   function y = f(x,m,x0,y0)
+      %F Helper function to solve using point-slope equation
+      y = y0 + m*(x - x0);
+   end
+
 
 end

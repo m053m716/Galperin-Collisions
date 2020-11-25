@@ -9,7 +9,7 @@ V0  = -1;              % large mass initial velocity
 D0  =  2;              % Initial distance from (fixed) WALL
 
 % Define number of collisions (minimum value is 3)
-[N,THETA,u,v,t,p] = tabulate_num_collisions(m,M,U0,V0,D0,false);
+[N,THETA,u,v,t,pos] = tabulate_num_collisions(m,M,U0,V0,D0,false);
 
 % % Make phase plot of "sawtooth" on circle representing collisions
 plotPhaseSpace(m,M,U0,V0,N,u,v); % Remove `fig` assignment to auto-save
@@ -23,4 +23,4 @@ plotPhaseSpace(m,M,U0,V0,N,u,v); % Remove `fig` assignment to auto-save
 %    [-0.75 1 1 1 -0.75],default.fs(),'medium');
 
 [data,fs,tSample] = writeCollisionSounds(t{3},[-0.25 -0.5 -1 1 1 -1 -0.5 -0.25],20000,'low');
-[fig,p,f,t_p] = plotSeries(tSample,data);
+[fig,pdata,f,t_f] = plotSeries(tSample,data);

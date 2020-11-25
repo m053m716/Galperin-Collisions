@@ -35,7 +35,10 @@ if iscell(y)
 end
 
 pars = struct;
+pars.KaiserShape = 38;
 pars.Normalization = 'maxmed';
+pars.Order = 3;
+pars.WLen_Seconds = 2;
 
 fn = fieldnames(pars);
 
@@ -53,11 +56,12 @@ else
    fs = round(1./nanmean(diff(t(~isinf(t)))));
 end
 
-if rem(fs,2)==0
-   fs = fs + 1; % Must be odd-valued window length (samples)
+wlen = round(fs * pars.WLen_Seconds);
+if rem(wlen,2)==0
+   wlen = wlen + 1; % Must be odd-valued window length (samples)
 end
 
-s = sgolayfilt(abs(y),3,fs,kaiser(fs,38),1);
+s = sgolayfilt(abs(y),pars.Order,wlen,kaiser(wlen,pars.KaiserShape),1);
 
 switch lower(pars.Normalization)
    case 'max'

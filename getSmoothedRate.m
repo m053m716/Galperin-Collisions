@@ -14,9 +14,12 @@ function s = getSmoothedRate(y,t,varargin)
 %
 %  varargin - Optional 'Name',value input argument pairs:
 %              * 'Normalization': 'maxmed' (def) | 'max' | 'none'
+%              * 'N_Levels': Number of "halvings" of filter order
+%              * 'WLen_Seconds': Initial filter length.
 %
 % Output
-%  s - Smoothed (savitzky-golay 3rd-order filter, 1-second window) rate
+%  s - Smoothed estimate using 'N_Levels' averaged forward and backward
+%        convolutions with rectangle of length `WLen_Seconds / level`
 %
 % See also: Contents, main.m, writeCollisionSounds, plotSeries
 
@@ -35,9 +38,8 @@ if iscell(y)
 end
 
 pars = struct;
-pars.KaiserShape = 38;
 pars.Normalization = 'maxmed';
-pars.Order = 3;
+pars.N_Levels = 30;
 pars.WLen_Seconds = 2;
 
 fn = fieldnames(pars);
@@ -49,32 +51,33 @@ for iV = 1:2:numel(varargin)
    end
 end
 
-
+% Was it times or sample rate that was given?
 if numel(t) == 1
    fs = t;
+%    t = 0:(1/fs):((numel(y)-1)/fs);
 else
    fs = round(1./nanmean(diff(t(~isinf(t)))));
 end
 
 wlen = round(fs * pars.WLen_Seconds);
-if rem(wlen,2)==0
-   wlen = wlen + 1; % Must be odd-valued window length (samples)
-end
-
-s = sgolayfilt(abs(y),pars.Order,wlen,kaiser(wlen,pars.KaiserShape),1);
+s = rectWindowSmooth(y,wlen,pars.N_Levels);
 
 switch lower(pars.Normalization)
    case 'max'
       s = s./max(abs(s));
-      return;
    case 'maxmed'
       s = s./max(abs(s)) - median(s./max(abs(s)));
-      return;
    case 'none'
-      return;
+      % Do nothing
    otherwise
       warning('Unrecognized value for "Normalization": %s (no normalization performed)',pars.Normalization);
-      return;
+      % Do nothing
 end
+
+% Remove edge-effect parts:
+iStart = round(wlen / pars.N_Levels);
+iStop = numel(s) - iStart + 1;
+s(1:iStart) = nan;
+s(iStop:end) = nan;
 
 end

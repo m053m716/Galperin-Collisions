@@ -21,6 +21,7 @@
 %
 % Functions: Math
 %   getSmoothedRate         - Return smoothed rate for time-series y of noisy impulses
+%   rectWindowSmooth        - Apply `rect` smoothing window to `y`
 %   run_collision           - Compute final velocities for ideal elastic collision
 %   run_collision_from_rest - Compute final velocities for ideal elastic collision, where one mass starts at rest.
 %   tabulate_num_collisions - Compute N and THETA by iterative tabulation

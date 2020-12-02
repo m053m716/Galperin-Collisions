@@ -35,7 +35,7 @@ classdef Joint
    
    enumeration
       Shoulder_Horizontal_Rotator      (2,"Shoulder_Horizontal_Rotator","revolute",[0.35,0.35,0.35],[-pi/6, pi/6],0,[1 0 0],"Shoulder_Horizontal_Link","base")
-%       Shoulder_Frontal_Rotator
+      Shoulder_Frontal_Rotator         (4,"Shoulder_Frontal_Rotator","revolute",[0.35,0.35,0.35],[-pi, pi],-pi,[0 1 0],"Shoulder_Frontal_Link","Shoulder_Horizontal_Link")
 %       Shoulder_Sagittal_Rotator
 %       Elbow
 %       Wrist

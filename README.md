@@ -11,6 +11,11 @@ Can a system of imaginary 1-D pool balls help us relate the physiology of spike 
 
    a. [**Neurobiology**](#neurobiology)
 
+   	+ [**Figure 1:** Animation of membrane voltage changes propagating along axon during an action potential.](#figure-1 "The fundamental unit of communication in the nervous system is the action potential. Spike train analysis consists of detecting the precise times of spike peaks, then re-expressing those peaks as sums of impulse functions with different offsets relative to the start of a record. In extracellular recordings, the action potentials from many units are typically recorded simultaneously, requiring more sophisticated characterization of the population-level spike trains.")
+   	+ [**Figure 2:** Example of spikes in extracellular field that correspond to putative action potentials.](#figure-2 "Different colors indicate clusters that have been manually curated or 'sorted' as dictated by the waveform morphology of roughly 30 samples centered around the peak. Sorting was more prevalent in the past, but with the advent of higher-density recording arrays it may be less-needed.")
+   	+ [**Figure 3:** Example of field potentials recorded by invasive electrodes.](#figure-3 "Spikes are detected from the extracellular local field potentials (LFP). The LFP is highly state-dependent in terms of its characteristics, indicating the importance of considering models capable of accounting for discrete or discrete-like phase transitions in the neural state space.")
+   	+ [**Figure 4:** Example of movement-related spiking in extracellular field potentials.](#figure-4 "There are 'bursts' of activity evident in both the timing of discrete spiking 'events' as well as the fluctuations in the local field potential, in synchronization with discrete components of movement. These signals are distributed throughout sensorimotor cortex in the rat.")
+
    b. **[Applied Math](#applied-math)**
 
 3. **[Motivation](#motivation)**
@@ -18,6 +23,19 @@ Can a system of imaginary 1-D pool balls help us relate the physiology of spike 
    a. **[Problem Statement](#problem-statement)**
 
    b. **[Specific Aims](#specific-aims)**
+
+   	+ [**Figure 5:** Example of polyphasic spiking evoked from rat sensorimotor cortex in response to mechanical stimulation.](#figure-5 "While traditional models of motor control have typically relied upon correlations between the neural state (defined by spike counts) and movement, even without movement present, simple somatosensory mechanical inputs result in complicated response patterns in sensorimotor units.")
+   	+ [**Figure 6:** Use of state-space reconfiguration to predict counts of billiard collisions in simple 1-D dynamical system.](#figure-6 "By relating elastic collisions in a simple dynamical system with a few masses or walls constrained to have biologically-plausible system parameters, is it possible to get a more intuitive sense for how discrete impulses relating to motor control are converted to force-generating movement commands?")
+
+4. **[Strategy](#strategy)**
+
+   a. **[Inverse Modeling of Dynamics](#inverse-model)** 
+
+   b. **[Biomechanical Simulations](#simulated-robot-arm "Use of a robotic arm as an endpoint for model validation.")**
+
+   	+ [**Video 1:** Supination about the Elbow](#video-1)
+
+   
 
 ## Startup
 * Simply run `main.m` (assuming you have **[Matlab R2020b](https://www.mathworks.com/downloads/web_downloads/download_release?release=R2020b "I am not sure what the earliest version that works would be. Maybe R2019a+?")** or comparable and the full set of academic licenses).
@@ -61,9 +79,13 @@ I was watching **[this YouTube video](https://www.youtube.com/watch?v=jsYwFizhnc
 
 #### What are ***Spikes***?
 
+*[Return to Table of Contents](#Contents)*
+
 **[Neurons](https://en.wikipedia.org/wiki/Neuron)** communicate in a variety of ways, but the traditional one that jumps to mind (perhaps because it is the most directly-evident and was the primary phenomenon under study in the **[Giant Squid](https://en.wikipedia.org/wiki/Hodgkin%E2%80%93Huxley_model)** axons of **[Hodgkin](https://en.wikipedia.org/wiki/Alan_Hodgkin)** and **[Huxley](https://en.wikipedia.org/wiki/Andrew_Huxley)**'s experiments) is the **[action potential](https://en.wikipedia.org/wiki/Action_potential)**. 
 
 ##### Figure 1
+
+*[Return to Table of Contents](#Contents)*
 
 ![](https://upload.wikimedia.org/wikipedia/commons/9/95/Action_Potential.gif "Illustration of the propagating ionic current inside a cell during an action potential.")
 
@@ -72,6 +94,8 @@ I was watching **[this YouTube video](https://www.youtube.com/watch?v=jsYwFizhnc
 We observe the **[action potential](https://en.wikipedia.org/wiki/Action_potential "spike")** as a change in voltage near a recording electrode and with reference to a secondary reference electrode (often called "ground"). The location of the ground depends on nature of the recordings; in extracellular, a reference may be placed on the cortical surface while a secondary ground, designed to remove biological sources of noise such as the electromyographical signals associated with chewing or other activity of the muscles around the head, is tied to a skull screw or other attachment point. For both intracellular and extracellular recordings, the rapid influx of sodium currents that occur after the voltage-gated sodium ion channels open following the membrane reaching a "critical" voltage threshold results in a decidedly "spike-like" change in the recorded voltage with respect to time and by comparison with the rest of the fluctuations in voltage signal. The nomenclature **"spikes"** is therefore made with reference to these approximately 300 - 3,000 Hz waveforms that appear to be, well, "spike-like" compared to the other arbitrarily slow voltage fluctuations in electrophysiological recordings.
 
 ##### Figure 2
+
+*[Return to Table of Contents](#Contents)*
 
 ![](https://raw.githubusercontent.com/m053m716/Galperin-Collisions/main/img/Example-Spikes.PNG "Example of spike sorting from a single recording channel in Layer 5 of the rat motor cortex.")
 
@@ -85,6 +109,8 @@ I have always studied extracellular field potentials, so any further mention of 
 
 ##### Figure 3
 
+*[Return to Table of Contents](#Contents)*
+
 ![](http://www.scholarpedia.org/w/images/0/05/8EEGs2.jpg "Local Field Potentials (LFP) are highly correlated on spatial scales that depend upon which networks are actively being recruited in the generation of a particular neural *state*")
 
 > **Local field potentials in cats during   wake and sleep states.**  Eight bipolar tungsten electrodes   (inter-electrode distance of 1 mm) were inserted into the depth   (1 mm) of areas 5-7 of cat [parietal cortex](http://www.scholarpedia.org/article/Parietal_cortex) (suprasylvian gyrus, area   5-7; see top scheme for arrangement of  electrodes).  Local field   potentials (LFPs) are shown (left panels)  together with a   representation of the correlations as a function of  distance   (Spatial correlations; middle panels) and time (Temporal    correlations; right panels).  A. When the animal was awake, LFPs   were  characterized by low-amplitude fast activities in the   beta/gamma  frequency range (15-75 Hz).  Correlations decayed steeply   with  distance and time.  B. During slow-wave sleep, the LFPs were   dominated by large-amplitude slow-wave complexes recurring at a low   frequency (<1 Hz; up to 4 Hz).  Correlations stayed high for large   distances.  C.   During episodes of REM sleep, LFPs and correlations   had similar  characteristics as during wake periods (* indicates a   PGO wave). Modified from Destexhe et al., 1999. ***(Linked figure and caption hosted by Scholarpedia and contributed by Alain Destexhe. http://www.scholarpedia.org/article/File:8EEGs2.jpg)***
@@ -93,9 +119,13 @@ While modern electrodes often have tens if not hundreds of electrodes along a si
 
 #### What are ***Spike Trains***?
 
+*[Return to Table of Contents](#Contents)*
+
 We refer to a series of spikes in sequence, which are thought to originate from a conserved neural unit of interest, as a **"train."** In the study of motor neurophysiology, spike trains are typically of interest around **[movement](#movement "'Grasp' or other similar movement components")** events of note. 
 
 ##### Figure 4
+
+*[Return to Table of Contents](#Contents)*
 
 ![](https://raw.githubusercontent.com/m053m716/Galperin-Collisions/main/img/Example-Spike-Trains.PNG "Bandpass-filtered extracellular field potentials from rat cortex during a reach-to-grasp pellet retrieval.")
 
@@ -105,11 +135,15 @@ There are [**many**](http://www.scholarpedia.org/article/Category:Spiking_Networ
 
 #### What is ***Movement***?
 
+*[Return to Table of Contents](#Contents)*
+
 While **"movement"** could easily refer to many things, it should be defined here as the constituent components of volitional, nuanced movements such as a reach-to-grasp. When I say "movement," I am usually thinking about something like "grasping," which would entail the hundreds of milliseconds just before and just after the closing of all the digits simultaneously. My graduate studies did not focus on reflexive control of movement, so I cannot pretend to know much in that area other than that there are certain canonical reflexes that are generally important and which I should expect to be present even during volitionally controlled behaviors. However, this definition simply hopes to capture the idea that here when "movement" is mentioned, I am thinking about whatever it is that goes through the brain just prior to reaching for a coffee mug, as well as the ensuing act of grasping the cup and retrieving it to the mouth.  
 
 ### Applied Math
 
 #### What is an ***elastic collision***?
+
+*[Return to Table of Contents](#Contents)*
 
 According to Wikipedia, an **[elastic collision](https://en.wikipedia.org/wiki/Elastic_collision)** is
 
@@ -119,9 +153,13 @@ For example, if there are two fixed walls at either end of a 1-dimensional rail 
 
 #### Who is ***Galperin***?
 
+*[Return to Table of Contents](#Contents)*
+
 **[Gregory Galperin](http://www.ux1.eiu.edu/~cfgg/ "Guy who I assume likes playing pool")** is an applied mathematician. "**[Galperin's Billiards](https://www.mdpi.com/2227-7390/8/4/509/htm)**" are an abstract 1-dimensional system comprised of a wall, a small billiard ball at rest, and a large billiard ball moving toward the small billiard ball from the side opposite the wall. In [**this paper**](https://maths.tcd.ie/~lebed/Galperin.%20Playing%20pool%20with%20pi.pdf) (pdf version is included with this repository), Galperin shows that this system can be used to very accurately estimate the value of *π* to any arbitrary precision by scaling the mass of the large ball as desired and then counting the number of ensuing collisions. This is because of the reframing of the problem of counting the balls using a state-space that relies on transforming combinations of the balls' masses and velocities while understanding the fundamental constraints on the bounds of the state-space describing the joint position and velocity of the balls. When the square root of the mass of the large ball is a factor of ten greater than the square root of the mass of the small ball, the resulting number of collisions becomes an increasingly accurate approximation of *π* as the mass of the large ball increases. While the appeal of accurately estimating *π* is not lost on me, the processes I am proposing to use relating physical collisions to neurophysiological spike trains are not really *Galperin's* per se. Rather, in learning about his work sparked my imagination about how we could make use of the dynamics of billiards as an intuitive descriptor for what is happening in the brain as it tries to control moving limbs during behavior. 
 
 #### Why ***billiards***?
+
+*[Return to Table of Contents](#Contents)*
 
 Why not? **[Billiards](https://en.wikipedia.org/wiki/Cue_sports "A game that the author is terrible at.")** are not only an enjoyable pastime, but more importantly, the complicated behavior of the moving and stationary objects, along with the constraining "boundary" walls, forms an interesting and rich basis for dynamical systems analogies. For a simple person like me, abstract or esoteric concepts are often unattainable and therefore a highly visual analogy provides a more accessible way to conceptualize how such a system might work. Often, I have been unable to describe phenomena related to the processing of network or population dynamics even though in my opinion they are neither abstract, esoteric, or even complicated; in my opinion this is because the formulation and description of these models does not lend itself to clear visual analogy in a way that is immediately apparent without an over-long (and difficult) explanation of the supposed neurobiological underpinnings. 
 
@@ -133,23 +171,33 @@ Many times, I've heard spikes "burst" in this similar fashion--for example when 
 
 ## Motivation
 
+*[Return to Table of Contents](#Contents)*
+
 I am not interested in the properties of a simple system of **[elastic collisions](#elastic-collisions)** as they relate to number theory and the accurate estimation of *π*, although that is an interesting application in its own right. Instead, there are two ways that I see the systems described in **[Galperin's billiards model](#Who-is-Galperin)** as being helpful to **[motor systems neuroscience](#neurobiology)** at large. To see why this is, we must first address the problem:
 
 ### Problem Statement
+
+*[Return to Table of Contents](#Contents)*
 
 While **[spikes](#What-are-Spikes)** are "discrete" sequences of impulses, **[movements](#What-is-Movement)** are smooth and continuous. Most attempts to relate the two for brain-computer-interface (BCI) control require a stochastic treatment of discrete spikes as noisy point processes; however, generalizing this to populations of spiking neurons makes it difficult to intuitively understand how the population is "controlling" the movement. Biophysically realistic networks of spiking neurons (e.g. simulations using Hodgkin-Huxley or other deterministic equations of spike generation) **[have been demonstrated](http://www.netpyne.org/)**, but require an abundance of parameters, high numbers of units in each simulated population in order to maintain accuracy, and may not offer simplifying insights. Artificial neural networks relying on **[deep learning techniques](https://www.nature.com/articles/s41592-018-0109-9)** to "**[open the black box](https://www.mitpressjournals.org/doi/full/10.1162/NECO_a_00409)**" of computations relating to dynamics of neural populations during movement or processing of stimuli seem to offer similar challenges in the process of regularizing and improving intuition from the expanded complexity associated with the model. **Can we make a simpler deterministic model that is not only useful but <u>intuitive</u> in both the analysis of spike trains and their efficient integration into BCI controllers?**
 
 ### Specific Aims
 
+*[Return to Table of Contents](#Contents)*
+
 Resolving this **[problem](#problem-statement)** requires working on it from either end in opposed direction: on one side, fundamental descriptive laws facilitating the implementation and realization of such a system must be developed (or, if they exist, I need to learn about them); on the other side, the utility of realizing a control system from this perspective must be tested empirically. As such, this requires two Specific Aims: the **[first](#applied-math-objective)** in the area of applied mathematics and the **[second](#systems-engineering-objective)** in the area of control systems engineering. 
 
 #### Applied Math Objective
+
+*[Return to Table of Contents](#Contents)*
 
 - [ ] **Specific Aim 1 develops a method to quickly estimate the basis system parameters from an observed sequence of [impulses](#What-are-Spikes).**
 
 I would like to simplify the description of any **[spike train](#What-are-Spike-Trains)** observed during **[movements](#What-is-Movement)** (or, any stimulus that elicits a [**complex polyphasic spiking response**](#figure-5), for that matter). 
 
 ##### Figure 5
+
+*[Return to Table of Contents](#Contents)*
 
 <img src="https://raw.githubusercontent.com/m053m716/Galperin-Collisions/main/img/Example-Polyphasic-Response.png" title="Example of polyphasic stimulus response for unit activity on a single recording channel in Layer 5 of Rat Sensory Cortex." style="zoom:45%;" />
 
@@ -171,11 +219,15 @@ While this may initially seem like many parameters, realize that in many cases t
 
 ##### Figure 6
 
+*[Return to Table of Contents](#Contents)*
+
 <img src="https://raw.githubusercontent.com/m053m716/Galperin-Collisions/main/img/Phase-Portrait--Multiple-Large-Weights.png" title="State-Space diagram for different numbers of collisions." style="zoom:50%;" />
 
 > _**State-space diagram for three different mass ratios.** The x-axis represents a scaled value of the square-root of the mass of the small ball times its velocity, while the y-axis represents a scaled value of the square-root of the mass of the large ball times its velocity. Each time that the path collides with the unit circle, the balls collide and the velocity of the small ball changes directions, causing it to "jump" to the top half of the circle. This continues until the large ball has changed direction and has a greater velocity than the small ball, at which point the small ball cannot "catch up" to the large ball In this example, the light-red path with **N = 11** was obtained when the mass of the small ball is equal to 1-kg and the mass of the large ball is equal to 10-kg. (Source: [`main.m`](https://github.com/m053m716/Galperin-Collisions/blob/main/main.m), via the [`plotPhaseSpace`](https://github.com/m053m716/Galperin-Collisions/blob/main/plotPhaseSpace.m) function included in this repository.)_
 
 #### Systems Engineering Objective
+
+*[Return to Table of Contents](#Contents)*
 
 - [ ] **Specific Aim 2 develops the simplest control system model capable of [moving](#What-is-Movement) a segmental limb model to a target end-point while using "[Galperin's Billiards](#Who-is-Galperin)" model parameters as the control signals.**
 
@@ -187,7 +239,30 @@ It is readily shown that this system is readily used to produce "spike-like" tra
 
 ##### Figure 7
 
+*[Return to Table of Contents](#Contents)*
+
 <img src="https://raw.githubusercontent.com/m053m716/Galperin-Collisions/main/img/Time-Freq.png" title="State-Space diagram for different numbers of collisions." style="zoom:75%;" />
 
 > _**Proof-of-concept simulation of time-series and frequency content for collision time-series generated by model.** (Top) The time-series is simply a series of impulses inserted at the corresponding sample indices denoted by the model-determined time-of-impact between the small ball and the wall or larger ball. Each collision is denoted by an impulse; here, the impulse has been convolved with an arbitrary spike-like shape; subsequently, noise was added to the distribution (as part of a process of audio export but not necessarily having immediate value other than conditioning the smoothing esteimator--the blue line indicating approximate instantaneous firing rate--in this case). (Bottom) An analytical description of the frequency content is one of the challenges that could be addressed from the applied-math side: can we make a description of the expected frequency content produced by the system given mass, velocity, and distance-to-the wall, from the outset? (Source: [`main.m`](https://github.com/m053m716/Galperin-Collisions/blob/main/main.m), via the [`plotSeries`](https://github.com/m053m716/Galperin-Collisions/blob/main/plotSeries.m) function included in this repository.)_
 
+---
+
+## Strategy ##
+
+*[Return to Table of Contents](#Contents)*
+
+### Inverse Dynamics ###
+
+*[Return to Table of Contents](#Contents)*
+
+
+
+### Simulated Robot Arm ###
+
+*[Return to Table of Contents](#Contents)*
+
+#### Video 1 ####
+
+*[Return to Table of Contents](#Contents)*
+
+<iframe width="1108" height="623" src="https://www.youtube.com/embed/VIDEO_ID?playlist=83vmhuoM90I&loop=1&modestbranding=1&rel=0&controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

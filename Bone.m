@@ -42,7 +42,7 @@ classdef Bone
    end
    
    enumeration
-      Shoulder_Horizontal_Link 	(1,"Shoulder_Horizontal_Link",0.002,0.00158,"Shoulder",[0.2 0.2 0.2],"Fixed")
+      Shoulder_Horizontal_Link 	 (1,"Shoulder_Horizontal_Link",0.002,0.00158,"Shoulder",[0.2 0.2 0.2],"Fixed")
       Shoulder_Frontal_Link      (3,"Shoulder_Frontal_Link",0.002,0.00158,"Shoulder",[0.2 0.2 0.2],"Shoulder_Horizontal_Rotator")
       Shoulder_Sagittal_Link     (5,"Shoulder_Sagittal_Link",0.002,0.00158,"Shoulder",[0.2 0.2 0.2],"Shoulder_Frontal_Rotator")
       Humerus                    (7,"Humerus",0.330,0.26027,"Proximal_Forelimb",[0.2 0.2 0.8],"Shoulder_Sagittal_Rotator")
